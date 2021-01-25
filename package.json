@@ -1,0 +1,29 @@
+{
+  "name": "locustjs-cache",
+  "version": "1.0.0",
+  "description": "This library provides a simple caching class.",
+  "main": "index.cjs.js",
+  "module": "index.esm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ironcodev/locustjs-cache.git"
+  },
+  "keywords": [
+    "javascript",
+    "locustjs",
+    "cache"
+  ],
+  "author": "Iron Code",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ironcodev/locustjs-cache/issues"
+  },
+  "homepage": "https://github.com/ironcodev/locustjs-cache#readme",
+  "dependencies": {
+    "locustjs-base": "^1.0.12",
+    "locustjs-exception": "^1.0.2"
+  }
+}
