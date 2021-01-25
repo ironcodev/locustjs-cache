@@ -269,4 +269,43 @@ class CacheDefault extends CacheBase {
     }
 }
 
-export { CacheItem, CacheBase, CacheDefault };
+class CacheNull extends CacheBase {
+    getEntry(key) {
+        return null;
+    }
+    getItem(key, fnCondition) {
+        return null;
+    }
+    setItem(key, value, duration) { }
+    exists(key) {
+        return false;
+    }
+    contains(value) {
+        return false;
+    }
+    clean() { }
+    clear() { }
+    getOrSet(key, value, fnCondition, duration) {
+        let result;
+
+        if (isFunction(value)) {
+            const _result = value(this);
+
+            if (_result && isFunction(_result.then)) {
+                result = new Promise((resolve, reject) => {
+                    _result.then(r => {
+                        resolve(r);
+                    }).catch(x => reject(x));
+                });
+            } else {
+                result = _result;
+            }
+        } else {
+            result = value;
+        }
+
+        return result;
+    }
+}
+
+export { CacheItem, CacheBase, CacheDefault, CacheNull };

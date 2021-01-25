@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CacheDefault = exports.CacheBase = exports.CacheItem = void 0;
+exports.CacheNull = exports.CacheDefault = exports.CacheBase = exports.CacheItem = void 0;
 
 var _locustjsException = require("locustjs-exception");
 
@@ -383,3 +383,75 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
 }(CacheBase);
 
 exports.CacheDefault = CacheDefault;
+
+var CacheNull = /*#__PURE__*/function (_CacheBase2) {
+  _inherits(CacheNull, _CacheBase2);
+
+  var _super2 = _createSuper(CacheNull);
+
+  function CacheNull() {
+    _classCallCheck(this, CacheNull);
+
+    return _super2.apply(this, arguments);
+  }
+
+  _createClass(CacheNull, [{
+    key: "getEntry",
+    value: function getEntry(key) {
+      return null;
+    }
+  }, {
+    key: "getItem",
+    value: function getItem(key, fnCondition) {
+      return null;
+    }
+  }, {
+    key: "setItem",
+    value: function setItem(key, value, duration) {}
+  }, {
+    key: "exists",
+    value: function exists(key) {
+      return false;
+    }
+  }, {
+    key: "contains",
+    value: function contains(value) {
+      return false;
+    }
+  }, {
+    key: "clean",
+    value: function clean() {}
+  }, {
+    key: "clear",
+    value: function clear() {}
+  }, {
+    key: "getOrSet",
+    value: function getOrSet(key, value, fnCondition, duration) {
+      var result;
+
+      if ((0, _locustjsBase.isFunction)(value)) {
+        var _result = value(this);
+
+        if (_result && (0, _locustjsBase.isFunction)(_result.then)) {
+          result = new Promise(function (resolve, reject) {
+            _result.then(function (r) {
+              resolve(r);
+            }).catch(function (x) {
+              return reject(x);
+            });
+          });
+        } else {
+          result = _result;
+        }
+      } else {
+        result = value;
+      }
+
+      return result;
+    }
+  }]);
+
+  return CacheNull;
+}(CacheBase);
+
+exports.CacheNull = CacheNull;
