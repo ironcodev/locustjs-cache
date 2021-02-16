@@ -50,6 +50,9 @@ class CacheBase {
     exists(key) {
         throwNotImplementedException('CacheBase.exists');
     }
+    remove(key) {
+        throwNotImplementedException('CacheBase.remove');
+    }
     contains(value, equalityComparer) {
         throwNotImplementedException('CacheBase.contains');
     }
@@ -146,6 +149,18 @@ class CacheDefault extends CacheBase {
     }
     exists(key) {
         return this.getEntry(key) != null;
+    }
+    remove(key) {
+        let result = false;
+        const entry = this.getEntry(key);
+
+        if (entry != null) {
+            entry.invalid();
+
+            result = true;
+        }
+        
+        return result;
     }
     contains(value, equalityComparer) {
         if (!isFunction(equalityComparer)) {
@@ -279,6 +294,9 @@ class CacheNull extends CacheBase {
     setItem(key, value, duration) { }
     exists(key) {
         return false;
+    }
+    remove(key) {
+        return true;
     }
     contains(value) {
         return false;

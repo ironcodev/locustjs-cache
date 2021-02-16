@@ -112,6 +112,11 @@ var CacheBase = /*#__PURE__*/function () {
       (0, _locustjsException.throwNotImplementedException)('CacheBase.exists');
     }
   }, {
+    key: "remove",
+    value: function remove(key) {
+      (0, _locustjsException.throwNotImplementedException)('CacheBase.remove');
+    }
+  }, {
     key: "contains",
     value: function contains(value, equalityComparer) {
       (0, _locustjsException.throwNotImplementedException)('CacheBase.contains');
@@ -237,6 +242,19 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
     key: "exists",
     value: function exists(key) {
       return this.getEntry(key) != null;
+    }
+  }, {
+    key: "remove",
+    value: function remove(key) {
+      var result = false;
+      var entry = this.getEntry(key);
+
+      if (entry != null) {
+        entry.invalid();
+        result = true;
+      }
+
+      return result;
     }
   }, {
     key: "contains",
@@ -412,6 +430,11 @@ var CacheNull = /*#__PURE__*/function (_CacheBase2) {
     key: "exists",
     value: function exists(key) {
       return false;
+    }
+  }, {
+    key: "remove",
+    value: function remove(key) {
+      return true;
     }
   }, {
     key: "contains",
