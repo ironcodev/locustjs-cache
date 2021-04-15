@@ -295,7 +295,7 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
     value: function _setValue(key, value, duration, entry) {
       var result;
 
-      var _duration = entry ? this.getDuration(duration) : duration;
+      var _duration = this.getDuration(entry ? entry.duration : duration);
 
       if ((0, _locustjsBase.isFunction)(value)) {
         var _result = value(this, entry);

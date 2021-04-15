@@ -181,7 +181,7 @@ class CacheDefault extends CacheBase {
     }
     _setValue(key, value, duration, entry) {
         let result;
-        const _duration = entry ? this.getDuration(duration) : duration;
+        const _duration = this.getDuration(entry ? entry.duration: duration);
 
         if (isFunction(value)) {
             const _result = value(this, entry);
