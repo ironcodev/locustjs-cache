@@ -45,7 +45,7 @@ var CacheItem = /*#__PURE__*/function () {
     key: "isValid",
     value: function isValid() {
       var elapsed = new Date() - this.createdDate;
-      return elapsed > 0 && elapsed < this.duration;
+      return elapsed >= 0 && elapsed < this.duration;
     }
   }, {
     key: "setValue",
@@ -249,7 +249,8 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
   }, {
     key: "exists",
     value: function exists(key) {
-      return this.getEntry(key) != null;
+      var entry = this.getEntry(key);
+      return entry && entry.isValid();
     }
   }, {
     key: "remove",
@@ -341,7 +342,7 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
     value: function getOrSet(key, value, fnCondition, duration) {
       var result;
 
-      var _fnCondition = arguments.length > 3 ? fnCondition : undefined;
+      var _fnCondition = arguments.length > 2 ? fnCondition : undefined;
 
       var _duration = arguments.length > 3 ? duration : fnCondition;
 
