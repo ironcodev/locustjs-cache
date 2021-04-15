@@ -9,7 +9,7 @@ class CacheItem {
     isValid() {
         const elapsed = new Date() - this.createdDate;
         
-        return elapsed > 0 && elapsed < this.duration;
+        return elapsed >= 0 && elapsed < this.duration;
     }
     setValue(value, duration) {
         this.value = value;
@@ -79,6 +79,7 @@ class CacheBase {
 
         return result;
     }
+    get length() { return 0 ; }
 }
 
 class CacheDefault extends CacheBase {
@@ -87,6 +88,7 @@ class CacheDefault extends CacheBase {
 
         this._data = []
     }
+    get length() { return this._data.length; }
     getEntry(key) {
         return this._data.find(x => x.key === key);
     }
@@ -148,7 +150,9 @@ class CacheDefault extends CacheBase {
         return value;
     }
     exists(key) {
-        return this.getEntry(key) != null;
+        const entry = this.getEntry(key);
+
+        return  entry && entry.isValid();
     }
     remove(key) {
         let result = false;
@@ -219,7 +223,7 @@ class CacheDefault extends CacheBase {
     }
     getOrSet(key, value, fnCondition, duration) {
         let result;
-        let _fnCondition = arguments.length > 3 ? fnCondition : undefined;
+        let _fnCondition = arguments.length > 2 ? fnCondition : undefined;
         let _duration = arguments.length > 3 ? duration : fnCondition;
 
         const entry = this.getEntry(key);

@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -9,9 +11,7 @@ var _locustjsException = require("locustjs-exception");
 
 var _locustjsBase = require("locustjs-base");
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only"); }
+function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -23,13 +23,11 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right[Symbol.hasInstance](left); } else { return left instanceof right; } }
-
-function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -150,6 +148,11 @@ var CacheBase = /*#__PURE__*/function () {
 
       return result;
     }
+  }, {
+    key: "length",
+    get: function get() {
+      return 0;
+    }
   }]);
 
   return CacheBase;
@@ -173,6 +176,11 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
   }
 
   _createClass(CacheDefault, [{
+    key: "length",
+    get: function get() {
+      return this._data.length;
+    }
+  }, {
     key: "getEntry",
     value: function getEntry(key) {
       return this._data.find(function (x) {
@@ -201,7 +209,7 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
                   entry.invalid();
                   resolve(undefined);
                 }
-              }).catch(function (x) {
+              })["catch"](function (x) {
                 return reject(x);
               });
             });
@@ -303,7 +311,7 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
               }
 
               resolve(r);
-            }).catch(function (x) {
+            })["catch"](function (x) {
               return reject(x);
             });
           });
@@ -363,7 +371,7 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
 
                     resolve(finalResult);
                   }
-                }).catch(function (x) {
+                })["catch"](function (x) {
                   return reject(x);
                 });
               });
@@ -459,7 +467,7 @@ var CacheNull = /*#__PURE__*/function (_CacheBase2) {
           result = new Promise(function (resolve, reject) {
             _result.then(function (r) {
               resolve(r);
-            }).catch(function (x) {
+            })["catch"](function (x) {
               return reject(x);
             });
           });
