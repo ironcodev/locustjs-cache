@@ -250,7 +250,7 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
     key: "exists",
     value: function exists(key) {
       var entry = this.getEntry(key);
-      return entry && entry.isValid();
+      return entry && entry.isValid() || false;
     }
   }, {
     key: "remove",

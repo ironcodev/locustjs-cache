@@ -40,7 +40,7 @@ const { CacheDefault } = require('../index.cjs');
 
             // --------------------- exists -------------------
 
-            test('exists: checks whether an item is inside in cahce based on its key and returns true/false', () => {
+            test('exists: checks whether an item is inside in cahce based on its key and returns true/false <existing>', () => {
                 const cache = config.factory();
 
                 cache.setItem('key1', 24);
@@ -50,6 +50,15 @@ const { CacheDefault } = require('../index.cjs');
                 expect(x).toBe(true)
             });
 
+            // --------------------- exists -------------------
+
+            test('exists: checks whether an item is inside in cahce based on its key and returns true/false <none-existing>', () => {
+                const cache = config.factory();
+                const x = cache.exists('key1');
+
+                expect(x).toBe(false)
+            });
+            
             // --------------------- remove -------------------
 
             test('remove: remove an item from cache based on its key', () => {

@@ -40,7 +40,7 @@ import { CacheDefault } from '../index.esm';
 
             // --------------------- exists -------------------
 
-            test('exists: checks whether an item is inside in cahce based on its key and returns true/false', () => {
+            test('exists: checks whether an item is inside in cahce based on its key and returns true/false <existing>', () => {
                 const cache = config.factory();
 
                 cache.setItem('key1', 24);
@@ -48,6 +48,15 @@ import { CacheDefault } from '../index.esm';
                 const x = cache.exists('key1');
 
                 expect(x).toBe(true)
+            });
+
+            // --------------------- exists -------------------
+
+            test('exists: checks whether an item is inside in cahce based on its key and returns true/false <none-existing>', () => {
+                const cache = config.factory();
+                const x = cache.exists('key1');
+
+                expect(x).toBe(false)
             });
 
             // --------------------- remove -------------------

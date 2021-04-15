@@ -152,7 +152,7 @@ class CacheDefault extends CacheBase {
     exists(key) {
         const entry = this.getEntry(key);
 
-        return  entry && entry.isValid();
+        return  (entry && entry.isValid()) || false;
     }
     remove(key) {
         let result = false;
