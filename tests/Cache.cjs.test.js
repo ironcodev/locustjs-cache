@@ -38,6 +38,31 @@ const { CacheDefault } = require('../index.cjs');
                 expect(x).toBe(34)
             });
 
+            // --------------------- addOrUpdate -------------------
+
+            test('addOrUpdate: add', () => {
+                const cache = config.factory();
+
+                cache.addOrUpdate('key1', x => x + 1, 30);
+
+                const x = cache.getItem('key1');
+
+                expect(x).toBe(30)
+            });
+
+            // --------------------- addOrUpdate -------------------
+
+            test('addOrUpdate: update', () => {
+                const cache = config.factory();
+
+                cache.setItem('key1', 24);
+                cache.addOrUpdate('key1', x => x + 1, 30);
+
+                const x = cache.getItem('key1');
+
+                expect(x).toBe(25)
+            });
+            
             // --------------------- exists -------------------
 
             test('exists: checks whether an item is inside in cahce based on its key and returns true/false <existing>', () => {

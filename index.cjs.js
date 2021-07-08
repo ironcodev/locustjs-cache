@@ -100,6 +100,11 @@ var CacheBase = /*#__PURE__*/function () {
       (0, _locustjsException.throwNotImplementedException)('CacheBase.setItem');
     }
   }, {
+    key: "addOrUpdate",
+    value: function addOrUpdate(key, fnUpdate, value, duration) {
+      (0, _locustjsException.throwNotImplementedException)('CacheBase.addOrUpdate');
+    }
+  }, {
     key: "getOrSet",
     value: function getOrSet(key, value, duration) {
       (0, _locustjsException.throwNotImplementedException)('CacheBase.getOrSet');
@@ -245,6 +250,26 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
       }
 
       return value;
+    }
+  }, {
+    key: "addOrUpdate",
+    value: function addOrUpdate(key, fnUpdate, value, duration) {
+      var entry = this.getEntry(key);
+      var result;
+
+      if (entry == null) {
+        var _duration = this.getDuration(duration);
+
+        this._data.push(new CacheItem(key, value, _duration));
+
+        result = value;
+      } else {
+        var newValue = (0, _locustjsBase.isFunction)(fnUpdate) ? fnUpdate(entry.value) : value;
+        entry.setValue(newValue);
+        result = newValue;
+      }
+
+      return result;
     }
   }, {
     key: "exists",
@@ -435,6 +460,11 @@ var CacheNull = /*#__PURE__*/function (_CacheBase2) {
   }, {
     key: "setItem",
     value: function setItem(key, value, duration) {}
+  }, {
+    key: "addOrUpdate",
+    value: function addOrUpdate(key, fnUpdate, value, duration) {
+      return null;
+    }
   }, {
     key: "exists",
     value: function exists(key) {

@@ -44,6 +44,9 @@ class CacheBase {
     setItem(key, value, duration) {
         throwNotImplementedException('CacheBase.setItem');
     }
+    addOrUpdate(key, fnUpdate, value, duration) {
+        throwNotImplementedException('CacheBase.addOrUpdate');
+    }
     getOrSet(key, value, duration) {
         throwNotImplementedException('CacheBase.getOrSet');
     }
@@ -148,6 +151,26 @@ class CacheDefault extends CacheBase {
         }
 
         return value;
+    }
+    addOrUpdate(key, fnUpdate, value, duration) {
+        const entry = this.getEntry(key);
+        let result;
+
+        if (entry == null) {
+            const _duration = this.getDuration(duration);
+
+            this._data.push(new CacheItem(key, value, _duration))
+
+            result = value;
+        } else {
+            const newValue = isFunction(fnUpdate) ? fnUpdate(entry.value): value;
+
+            entry.setValue(newValue);
+
+            result = newValue;
+        }
+
+        return result;
     }
     exists(key) {
         const entry = this.getEntry(key);
@@ -296,6 +319,9 @@ class CacheNull extends CacheBase {
         return null;
     }
     setItem(key, value, duration) { }
+    addOrUpdate(key, fnUpdate, value, duration) {
+        return null;
+    }
     exists(key) {
         return false;
     }
