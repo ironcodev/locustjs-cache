@@ -1,519 +1,548 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CacheNull = exports.CacheDefault = exports.CacheBase = exports.CacheItem = void 0;
+exports.CacheNull = exports.CacheItem = exports.CacheDefault = exports.CacheBase = void 0;
 
 var _locustjsException = require("locustjs-exception");
 
 var _locustjsBase = require("locustjs-base");
 
-function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var CacheItem = /*#__PURE__*/function () {
-  function CacheItem(key, value, duration) {
-    _classCallCheck(this, CacheItem);
-
+class CacheItem {
+  constructor(key, value, duration) {
     this.key = key;
     this.setValue(value, duration);
   }
 
-  _createClass(CacheItem, [{
-    key: "isValid",
-    value: function isValid() {
-      var elapsed = new Date() - this.createdDate;
-      return elapsed >= 0 && elapsed < this.duration;
-    }
-  }, {
-    key: "setValue",
-    value: function setValue(value, duration) {
-      this.value = value;
-      this.createdDate = new Date();
-      this.hits = 0;
-      this.duration = (0, _locustjsBase.isNumeric)(duration) ? parseInt(duration) : this.duration;
+  isValid() {
+    const elapsed = new Date() - this.createdDate;
+    return elapsed >= 0 && elapsed < this.duration;
+  }
 
-      if (isNaN(this.duration) || (0, _locustjsBase.isEmpty)(this.duration)) {
-        this.duration = 0;
-      }
-    }
-  }, {
-    key: "hit",
-    value: function hit() {
-      this.hits++;
-    }
-  }, {
-    key: "invalid",
-    value: function invalid() {
-      this.createdDate.setFullYear(this.createdDate.getFullYear() + 100);
-    }
-  }]);
+  setValue(value, duration) {
+    this.value = value;
+    this.createdDate = new Date();
+    this.hits = 0;
+    this.duration = (0, _locustjsBase.isNumeric)(duration) ? parseInt(duration) : this.duration;
 
-  return CacheItem;
-}();
+    if (isNaN(this.duration) || (0, _locustjsBase.isEmpty)(this.duration)) {
+      this.duration = 0;
+    }
+  }
+
+  hit() {
+    this.hits++;
+    this.lastHit = new Date();
+  }
+
+  invalid() {
+    this.createdDate.setFullYear(this.createdDate.getFullYear() + 100);
+  }
+
+}
 
 exports.CacheItem = CacheItem;
 
-var CacheBase = /*#__PURE__*/function () {
-  function CacheBase(config) {
-    _classCallCheck(this, CacheBase);
-
+class CacheBase {
+  constructor(config) {
     (0, _locustjsException.throwIfInstantiateAbstract)(CacheBase, this);
     this.config = Object.assign({}, config);
   }
 
-  _createClass(CacheBase, [{
-    key: "getEntry",
-    value: function getEntry(key) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.getEntry');
-    }
-  }, {
-    key: "getItem",
-    value: function getItem(key, fnCondition) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.getItem');
-    }
-  }, {
-    key: "setItem",
-    value: function setItem(key, value, duration) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.setItem');
-    }
-  }, {
-    key: "addOrUpdate",
-    value: function addOrUpdate(key, fnUpdate, value, duration) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.addOrUpdate');
-    }
-  }, {
-    key: "getOrSet",
-    value: function getOrSet(key, value, duration) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.getOrSet');
-    }
-  }, {
-    key: "exists",
-    value: function exists(key) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.exists');
-    }
-  }, {
-    key: "remove",
-    value: function remove(key) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.remove');
-    }
-  }, {
-    key: "contains",
-    value: function contains(value, equalityComparer) {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.contains');
-    }
-  }, {
-    key: "clean",
-    value: function clean() {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.clean');
-    }
-  }, {
-    key: "clear",
-    value: function clear() {
-      (0, _locustjsException.throwNotImplementedException)('CacheBase.clear');
-    }
-  }, {
-    key: "getDuration",
-    value: function getDuration(duration) {
-      var result = 0;
+  getEntry(key) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.getEntry');
+  }
 
-      if ((0, _locustjsBase.isNumeric)(duration)) {
-        result = parseInt(duration);
-      } else {
-        if (this.config && (0, _locustjsBase.isNumeric)(this.config.duration)) {
-          result = parseInt(this.config.duration);
-        }
+  getItem(key, fnCondition) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.getItem');
+  }
+
+  getItemAsync(key, fnCondition) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.getItemAsync');
+  }
+
+  setItem(key, value, duration) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.setItem');
+  }
+
+  setItemAsync(key, value, duration) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.setItemAsync');
+  }
+
+  addOrUpdate(key, value, fnUpdate, duration) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.addOrUpdate');
+  }
+
+  addOrUpdateAsync(key, value, fnUpdate, duration) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.addOrUpdateAsync');
+  }
+
+  getOrSet(key, value, fnCondition, duration) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.getOrSet');
+  }
+
+  getOrSetAsync(key, value, fnCondition, duration) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.getOrSetAsync');
+  }
+
+  exists(key) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.exists');
+  }
+
+  remove(key) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.remove');
+  }
+
+  contains(value, fnEqualityComparer) {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.contains');
+  }
+
+  clean() {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.clean');
+  }
+
+  clear() {
+    (0, _locustjsException.throwNotImplementedException)('CacheBase.clear');
+  }
+
+  getDuration(duration) {
+    let result = 0;
+
+    if ((0, _locustjsBase.isNumeric)(duration)) {
+      result = parseInt(duration);
+    } else {
+      if (this.config && (0, _locustjsBase.isNumeric)(this.config.duration)) {
+        result = parseInt(this.config.duration);
       }
-
-      if (isNaN(result) || (0, _locustjsBase.isEmpty)(result)) {
-        result = 0;
-      }
-
-      return result;
     }
-  }, {
-    key: "length",
-    get: function get() {
-      return 0;
-    }
-  }]);
 
-  return CacheBase;
-}();
+    if (isNaN(result) || (0, _locustjsBase.isEmpty)(result)) {
+      result = 0;
+    }
+
+    return result;
+  }
+
+  get length() {
+    return 0;
+  }
+
+}
 
 exports.CacheBase = CacheBase;
 
-var CacheDefault = /*#__PURE__*/function (_CacheBase) {
-  _inherits(CacheDefault, _CacheBase);
-
-  var _super = _createSuper(CacheDefault);
-
-  function CacheDefault(config) {
-    var _this2;
-
-    _classCallCheck(this, CacheDefault);
-
-    _this2 = _super.call(this, config);
-    _this2._data = [];
-    return _this2;
+class CacheDefault extends CacheBase {
+  constructor(config) {
+    super(config);
+    this._data = [];
   }
 
-  _createClass(CacheDefault, [{
-    key: "length",
-    get: function get() {
-      return this._data.length;
-    }
-  }, {
-    key: "getEntry",
-    value: function getEntry(key) {
-      return this._data.find(function (x) {
-        return x.key === key;
-      });
-    }
-  }, {
-    key: "getItem",
-    value: function getItem(key, fnCondition) {
-      var result;
-      var entry = this.getEntry(key);
+  get length() {
+    return this._data.length;
+  }
 
-      if (entry != null && entry.isValid()) {
-        var ok = true;
+  getEntry(key) {
+    return this._data.find(x => x.key === key);
+  }
 
-        if ((0, _locustjsBase.isFunction)(fnCondition)) {
-          var _result = fnCondition(this, entry);
+  getItem(key, fnCondition) {
+    let result;
+    const entry = this.getEntry(key);
 
-          if (_result && (0, _locustjsBase.isFunction)(_result.then)) {
-            result = new Promise(function (resolve, reject) {
-              _result.then(function (r) {
-                if (r) {
-                  entry.hit();
-                  resolve(entry.value);
-                } else {
-                  entry.invalid();
-                  resolve(undefined);
-                }
-              })["catch"](function (x) {
-                return reject(x);
-              });
-            });
-            ok = (_readOnlyError("ok"), false);
-          } else {
-            ok = (_readOnlyError("ok"), _result);
+    if (entry != null && entry.isValid()) {
+      let ok = true;
 
-            if (!ok) {
-              entry.invalid();
-            }
-          }
-        }
+      if ((0, _locustjsBase.isFunction)(fnCondition)) {
+        ok = fnCondition(this, entry.value);
 
-        if (ok) {
-          entry.hit();
-          result = entry.value;
+        if (!ok) {
+          entry.invalid();
         }
       }
 
-      return result;
-    }
-  }, {
-    key: "setItem",
-    value: function setItem(key, value, duration) {
-      var entry = this.getEntry(key);
-
-      if (entry == null) {
-        var _duration = this.getDuration(duration);
-
-        this._data.push(new CacheItem(key, value, _duration));
-      } else {
-        entry.setValue(value);
-      }
-
-      return value;
-    }
-  }, {
-    key: "addOrUpdate",
-    value: function addOrUpdate(key, fnUpdate, value, duration) {
-      var entry = this.getEntry(key);
-      var result;
-
-      if (entry == null) {
-        var _duration = this.getDuration(duration);
-
-        this._data.push(new CacheItem(key, value, _duration));
-
-        result = value;
-      } else {
-        var newValue = (0, _locustjsBase.isFunction)(fnUpdate) ? fnUpdate(entry.value) : value;
-        entry.setValue(newValue);
-        result = newValue;
-      }
-
-      return result;
-    }
-  }, {
-    key: "exists",
-    value: function exists(key) {
-      var entry = this.getEntry(key);
-      return entry && entry.isValid() || false;
-    }
-  }, {
-    key: "remove",
-    value: function remove(key) {
-      var result = false;
-      var entry = this.getEntry(key);
-
-      if (entry != null) {
-        entry.invalid();
-        result = true;
-      }
-
-      return result;
-    }
-  }, {
-    key: "contains",
-    value: function contains(value, equalityComparer) {
-      if (!(0, _locustjsBase.isFunction)(equalityComparer)) {
-        return this._data.find(function (x) {
-          return x.value === value;
-        }) != null;
-      } else {
-        return this._data.find(function (x) {
-          return equalityComparer(x.value, value);
-        }) != null;
+      if (ok) {
+        entry.hit();
+        result = entry.value;
       }
     }
-  }, {
-    key: "clean",
-    value: function clean() {
-      this._data = this._data.filter(function (x) {
-        return x.isValid();
-      });
-    }
-  }, {
-    key: "clear",
-    value: function clear() {
-      this._data = [];
-    }
-  }, {
-    key: "_setValue",
-    value: function _setValue(key, value, duration, entry) {
-      var result;
 
-      var _duration = this.getDuration(entry ? entry.duration : duration);
+    return result;
+  }
 
-      if ((0, _locustjsBase.isFunction)(value)) {
-        var _result = value(this, entry);
+  getItemAsync(key, fnCondition) {
+    let result;
+    let value;
+    const entry = this.getEntry(key);
 
-        if (_result && (0, _locustjsBase.isFunction)(_result.then)) {
-          var _this = this;
+    if (entry != null && entry.isValid()) {
+      if ((0, _locustjsBase.isFunction)(fnCondition)) {
+        const isOk = fnCondition(this, entry.value);
 
-          result = new Promise(function (resolve, reject) {
-            _result.then(function (r) {
-              if (entry) {
-                entry.setValue(r, _duration);
+        if (isOk && (0, _locustjsBase.isFunction)(isOk.then)) {
+          result = new Promise((resolve, reject) => {
+            isOk.then(r => {
+              if (r) {
+                entry.hit();
+                resolve(entry.value);
               } else {
-                _this.setItem(key, r, _duration);
+                entry.invalid();
+                resolve(undefined);
               }
-
-              resolve(r);
-            })["catch"](function (x) {
-              return reject(x);
-            });
+            }).catch(x => reject(x));
           });
         } else {
-          if (entry) {
-            entry.setValue(_result, _duration);
+          if (isOk) {
+            entry.hit();
+            value = entry.value;
           } else {
-            this.setItem(key, _result, _duration);
+            entry.invalid();
           }
-
-          result = _result;
         }
       } else {
-        if (entry) {
-          entry.setValue(value, _duration);
-        } else {
-          this.setItem(key, value, _duration);
-        }
+        entry.hit();
+        value = entry.value;
+      }
+    }
 
+    if (!result) {
+      result = new Promise(res => res(value));
+    }
+
+    return result;
+  }
+
+  _add(key, value, duration) {
+    this._data.push(new CacheItem(key, value, duration));
+  }
+
+  setItem(key, value, duration) {
+    let result;
+    const entry = this.getEntry(key);
+
+    if (entry == null) {
+      const _duration = this.getDuration(duration);
+
+      if ((0, _locustjsBase.isFunction)(value)) {
+        result = value(this, key, duration);
+      } else {
         result = value;
       }
 
-      return result;
-    }
-  }, {
-    key: "getOrSet",
-    value: function getOrSet(key, value, fnCondition, duration) {
-      var result;
-
-      var _fnCondition = arguments.length > 2 ? fnCondition : undefined;
-
-      var _duration = arguments.length > 3 ? duration : fnCondition;
-
-      var entry = this.getEntry(key);
-
-      if (entry != null) {
-        var setValue = false;
-
-        if (entry.isValid()) {
-          var ok = true;
-
-          if ((0, _locustjsBase.isFunction)(_fnCondition)) {
-            var _result = _fnCondition(this, entry);
-
-            if (_result && (0, _locustjsBase.isFunction)(_result.then)) {
-              var _this = this;
-
-              result = new Promise(function (resolve, reject) {
-                _result.then(function (r) {
-                  if (r) {
-                    entry.hit();
-                    resolve(entry.value);
-                  } else {
-                    entry.invalid();
-
-                    var finalResult = _this._setValue(key, value, _duration, entry);
-
-                    resolve(finalResult);
-                  }
-                })["catch"](function (x) {
-                  return reject(x);
-                });
-              });
-              ok = false;
-            } else {
-              ok = _result;
-
-              if (!ok) {
-                entry.invalid();
-                setValue = true;
-              }
-            }
-          }
-
-          if (ok) {
-            entry.hit();
-            result = entry.value;
-          }
-        } else {
-          setValue = true;
-        }
-
-        if (setValue) {
-          result = this._setValue(key, value, _duration, entry);
-        }
+      this._add(key, result, _duration);
+    } else {
+      if ((0, _locustjsBase.isFunction)(value)) {
+        result = value(this, key, duration);
       } else {
-        result = this._setValue(key, value, _duration);
+        result = value;
       }
 
-      return result;
+      entry.setValue(result);
     }
-  }]);
 
-  return CacheDefault;
-}(CacheBase);
+    return result;
+  }
+
+  setItemAsync(key, value, duration) {
+    let result;
+    const entry = this.getEntry(key);
+
+    if (entry == null) {
+      const _duration = this.getDuration(duration);
+
+      if ((0, _locustjsBase.isFunction)(value)) {
+        const _value = value(this, key, duration);
+
+        if (_value && (0, _locustjsBase.isFunction)(_value.then)) {
+          result = new Promise((resolve, reject) => {
+            _value.then(r => {
+              this._add(key, r, _duration);
+
+              resolve(r);
+            }).catch(x => reject(x));
+          });
+        } else {
+          this._add(key, _value, _duration);
+
+          result = Promise.resolve(_value);
+        }
+      } else {
+        this._add(key, value, _duration);
+
+        result = Promise.resolve(value);
+      }
+    } else {
+      if ((0, _locustjsBase.isFunction)(value)) {
+        const _value = value(this, key, duration);
+
+        if (_value && (0, _locustjsBase.isFunction)(_value.then)) {
+          result = new Promise((resolve, reject) => {
+            _value.then(r => {
+              entry.setValue(r);
+              resolve(r);
+            }).catch(x => reject(x));
+          });
+        } else {
+          entry.setValue(_value);
+          result = Promise.resolve(_value);
+        }
+      } else {
+        entry.setValue(value);
+        result = Promise.resolve(value);
+      }
+    }
+
+    return result;
+  }
+
+  addOrUpdate(key, value, fnUpdate, duration) {
+    const entry = this.getEntry(key);
+    let result;
+
+    if (entry == null) {
+      const _duration = this.getDuration(duration);
+
+      if ((0, _locustjsBase.isFunction)(value)) {
+        result = value(this, key, duration);
+      } else {
+        result = value;
+      }
+
+      this._add(key, result, _duration);
+    } else {
+      if ((0, _locustjsBase.isFunction)(fnUpdate)) {
+        result = fnUpdate(this, entry.value, value);
+      } else {
+        if ((0, _locustjsBase.isFunction)(value)) {
+          result = value(this, key, duration);
+        } else {
+          result = value;
+        }
+      }
+
+      entry.setValue(result);
+    }
+
+    return result;
+  }
+
+  addOrUpdateAsync(key, value, fnUpdate, duration) {
+    const entry = this.getEntry(key);
+
+    let _value;
+
+    let result;
+
+    if (entry == null) {
+      const _duration = this.getDuration(duration);
+
+      if ((0, _locustjsBase.isFunction)(value)) {
+        _value = value(this, key, duration);
+
+        if (_value && (0, _locustjsBase.isFunction)(_value.then)) {
+          result = new Promise((resolve, reject) => {
+            _value.then(r => {
+              this._add(key, r, _duration);
+
+              resolve(r);
+            }).catch(x => reject(x));
+          });
+        } else {
+          this._add(key, _value, _duration);
+
+          result = Promise.resolve(_value);
+        }
+      } else {
+        this._add(key, value, _duration);
+
+        result = Promise.resolve(value);
+      }
+    } else {
+      if ((0, _locustjsBase.isFunction)(fnUpdate)) {
+        _value = fnUpdate(this, entry.value, value);
+
+        if (_value && (0, _locustjsBase.isFunction)(_value.then)) {
+          result = new Promise((resolve, reject) => {
+            _value.then(r => {
+              entry.setValue(r);
+              resolve(r);
+            }).catch(x => reject(x));
+          });
+        } else {
+          entry.setValue(_value);
+          result = Promise.resolve(_value);
+        }
+      } else {
+        if ((0, _locustjsBase.isFunction)(value)) {
+          _value = value(this, key, duration);
+
+          if (_value && (0, _locustjsBase.isFunction)(_value.then)) {
+            result = new Promise((resolve, reject) => {
+              _value.then(r => {
+                entry.setValue(r);
+                resolve(r);
+              }).catch(x => reject(x));
+            });
+          } else {
+            entry.setValue(_value);
+            result = Promise.resolve(_value);
+          }
+        } else {
+          entry.setValue(value);
+          result = Promise.resolve(value);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  exists(key) {
+    const entry = this.getEntry(key);
+    return entry && entry.isValid() || false;
+  }
+
+  remove(key) {
+    let result = false;
+    const entry = this.getEntry(key);
+
+    if (entry != null) {
+      entry.invalid();
+      result = true;
+    }
+
+    return result;
+  }
+
+  contains(value, fnEqualityComparer) {
+    if (!(0, _locustjsBase.isFunction)(fnEqualityComparer)) {
+      return this._data.find(x => x.value === value) != null;
+    } else {
+      return this._data.find(x => fnEqualityComparer(x.value, value)) != null;
+    }
+  }
+
+  clean() {
+    this._data = this._data.filter(x => x.isValid());
+  }
+
+  clear() {
+    this._data = [];
+  }
+
+  getOrSet(key, fnCondition, value, duration) {
+    let result;
+
+    if (this.exists(key)) {
+      result = this.getItem(key, fnCondition);
+
+      if (!this.exists(key)) {
+        result = this.setItem(key, value, duration);
+      }
+    } else {
+      result = this.setItem(key, value, duration);
+    }
+
+    return result;
+  }
+
+  async getOrSetAsync(key, fnCondition, value, duration) {
+    let result;
+
+    if (this.exists(key)) {
+      result = await this.getItemAsync(key, fnCondition);
+
+      if (!this.exists(key)) {
+        result = await this.setItemAsync(key, value, duration);
+      }
+    } else {
+      result = await this.setItemAsync(key, value, duration);
+    }
+
+    return result;
+  }
+
+}
 
 exports.CacheDefault = CacheDefault;
 
-var CacheNull = /*#__PURE__*/function (_CacheBase2) {
-  _inherits(CacheNull, _CacheBase2);
-
-  var _super2 = _createSuper(CacheNull);
-
-  function CacheNull() {
-    _classCallCheck(this, CacheNull);
-
-    return _super2.apply(this, arguments);
+class CacheNull extends CacheBase {
+  getEntry(key) {
+    return undefined;
   }
 
-  _createClass(CacheNull, [{
-    key: "getEntry",
-    value: function getEntry(key) {
-      return null;
-    }
-  }, {
-    key: "getItem",
-    value: function getItem(key, fnCondition) {
-      return null;
-    }
-  }, {
-    key: "setItem",
-    value: function setItem(key, value, duration) {}
-  }, {
-    key: "addOrUpdate",
-    value: function addOrUpdate(key, fnUpdate, value, duration) {
-      return null;
-    }
-  }, {
-    key: "exists",
-    value: function exists(key) {
-      return false;
-    }
-  }, {
-    key: "remove",
-    value: function remove(key) {
-      return true;
-    }
-  }, {
-    key: "contains",
-    value: function contains(value) {
-      return false;
-    }
-  }, {
-    key: "clean",
-    value: function clean() {}
-  }, {
-    key: "clear",
-    value: function clear() {}
-  }, {
-    key: "getOrSet",
-    value: function getOrSet(key, value, fnCondition, duration) {
-      var result;
+  getItem(key, fnCondition) {
+    return undefined;
+  }
 
-      if ((0, _locustjsBase.isFunction)(value)) {
-        var _result = value(this);
+  getItemAsync(key, fnCondition) {
+    return Promise.resolve(undefined);
+  }
 
-        if (_result && (0, _locustjsBase.isFunction)(_result.then)) {
-          result = new Promise(function (resolve, reject) {
-            _result.then(function (r) {
-              resolve(r);
-            })["catch"](function (x) {
-              return reject(x);
-            });
-          });
-        } else {
-          result = _result;
-        }
-      } else {
-        result = value;
-      }
-
-      return result;
+  setItem(key, value, duration) {
+    if ((0, _locustjsBase.isFunction)(value)) {
+      return value();
+    } else {
+      return value;
     }
-  }]);
+  }
 
-  return CacheNull;
-}(CacheBase);
+  setItemAsync(key, value, duration) {
+    if ((0, _locustjsBase.isFunction)(value)) {
+      return Promise.resolve(value());
+    } else {
+      return Promise.resolve(value);
+    }
+  }
+
+  addOrUpdate(key, value, fnUpdate, duration) {
+    if ((0, _locustjsBase.isFunction)(value)) {
+      return value();
+    } else {
+      return value;
+    }
+  }
+
+  addOrUpdateAsync(key, value, fnUpdate, duration) {
+    if ((0, _locustjsBase.isFunction)(value)) {
+      return Promise.resolve(value());
+    } else {
+      return Promise.resolve(value);
+    }
+  }
+
+  exists(key) {
+    return false;
+  }
+
+  remove(key) {
+    return false;
+  }
+
+  contains(value) {
+    return false;
+  }
+
+  clean() {}
+
+  clear() {}
+
+  getOrSet(key, fnCondition, value, duration) {
+    if ((0, _locustjsBase.isFunction)(value)) {
+      return value();
+    } else {
+      return value;
+    }
+  }
+
+  getOrSetAsync(key, fnCondition, value, duration) {
+    if ((0, _locustjsBase.isFunction)(value)) {
+      return Promise.resolve(value());
+    } else {
+      return Promise.resolve(value);
+    }
+  }
+
+}
 
 exports.CacheNull = CacheNull;
