@@ -1,5 +1,5 @@
-import { throwIfInstantiateAbstract, throwNotImplementedException } from 'locustjs-exception';
-import { isNumeric, isEmpty, isFunction } from 'locustjs-base';
+import { throwIfInstantiateAbstract, throwNotImplementedException } from '@locustjs/exception';
+import { isNumeric, isEmpty, isFunction } from '@locustjs/base';
 
 class CacheItem {
     constructor(key, value, duration) {
