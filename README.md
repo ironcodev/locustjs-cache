@@ -1,18 +1,18 @@
-# locustjs-cache
+# @locustjs/cache
 This library provides a simple caching utility in an abstract manner.
 
-It can be used independently in any `javascript` project, however, since the abstraction layer `locustjs-cache` provides, it is best used in conjuction with an `IoC container` or `DI container` such as [locustjs-locator](https://github.com/ironcodev/locustjs-locator).
+It can be used independently in any `javascript` project, however, since the abstraction layer `locustjs-cache` provides, it is best used in conjuction with an `IoC container` or `DI container` such as [@locustjs/locator](https://github.com/ironcodev/locustjs-locator).
 
 ## Installation
 
 NPM
 ```
-npm i locustjs-cache
+npm i @locustjs/cache
 ```
 
 Yarn
 ```
-yarn add locustjs-cache
+yarn add @locustjs/cache
 ```
 
 ## Classes
@@ -37,20 +37,16 @@ constructor(config)
 
 | Method | Result | Description                   |
 |--------|--------|-----------------------|
-| `getEntry(key)` | `CacheItem` | This method returns cache item entry in the cache based on its key. |
-| `getItem(key, fnCondition?)` | `any` (cached value) | This method returns a cached value based on its key. The get operation can be performed conditionally using the `fnCondition` function which is explained a little further.  |
-| `getItemAsync(key, fnCondition?)` | `Promise<any>` (cached value) | This method acts the same way as `getItem()`. It just returns a promise, since it supports asynchronous `fnCondition`.  |
-| `setItem(key, value, duration?)` | `void` | This method adds a new cache item into cache with specified `duration`. if `duration` is not specified, `config.duration` will be used for given cache item. If an item already exists in the cache with the same key, it is overwritten unconditionally. In order to perform an add/update operation, developers should use `addOrUpdate` method. |
-| `setItemAsync(key, value, duration?)` | `Promise<any>` | This method acts the same way as `setItem()`. It just returns a promise, since it supports asynchronous `value factory`. |
-| `addOrUpdate(key, value, fnUpdate, duration)` | `any` (cached value) | This method adds a new item into the cache with given value and key if an item does not already exist with the given key; Otherwise, it updates the existing cache entry with the new value based on the `fnUpdate` function. |
-| `addOrUpdateAsync(key, value, fnUpdate, duration)` | `Promise<any>` (cached value) | This method acts the same way as `addOrUpdate()`. It just returns a promise, since it supports asynchronous `value factory` and `fnUpdate`. |
-| `getOrSet(key, fnCondition, value, duration?)` | `any` (cached value) | This method returns a cached value if it already exists in the cahe. It adds a new item into cache if such item does not exist. The get operation can be conditional by specifying `fnCondition` function. This is explained a little further. |
-| `getOrSetAsync(key, fnCondition, value, duration?)` | `Promise<any>` (cached value) | This method acts the same way as `getOrSet()`. It just returns a promise, since it supports asynchronous `value factory`. |
-| `exists(key)` | `boolean` | This method checks whether an item with given `key` exists in the cache. |
-| `remove(key)` | `boolean` | This method removes a cached item with given `key` and returns `true` if succeeded (item was existing) or `false` (otherwise) |
-| `contains(value, fnEqualityComparer?)` | `boolean` | This methods looks in the cache for the given `value` and returns `true` if it finds a cach entry with this value or `false` (otherwise). If `fnEqualityComparer` function specified, it uses that in order to find cached entry when comparing given `value` with a cached value upon iterating over cached entries. |
-| `clean()` | `void` | This method cleans cache; removes items that are invalid (expired) but staying in the cache and wasting memory. |
-| `clear()` | `void` | This method clears out the cache (removes all entries). |
+| `getEntry(key)` | `CacheItem` | returns cache item entry in the cache based on its key. |
+| `getItem(key, fnCondition?)` | `any` (cached value) | returns a cached value based on its key. The get operation can be performed conditionally using the `fnCondition` function which is explained a little further.  |
+| `setItem(key, value, duration?)` | `void` | adds a new cache item into cache with specified `duration`. if `duration` is not specified, `config.duration` will be used for given cache item. If an item already exists in the cache with the same key, it is overwritten unconditionally. In order to perform an add/update operation, developers should use `addOrUpdate` method. |
+| `addOrUpdate(key, value, fnUpdate, duration)` | `any` (cached value) | adds a new item into the cache with given value and key if an item does not already exist with the given key; Otherwise, it updates the existing cache entry with the new value based on the `fnUpdate` function. |
+| `getOrSet(key, fnCondition, value, duration?)` | `any` (cached value) | returns a cached value if it already exists in the cahe. It adds a new item into cache if such item does not exist. The get operation can be conditional by specifying `fnCondition` function. This is explained a little further. |
+| `exists(key)` | `boolean` | checks whether an item with given `key` exists in the cache. |
+| `remove(key)` | `boolean` | removes a cached item with given `key` and returns `true` if succeeded (item was existing) or `false` (otherwise) |
+| `contains(value, fnEqualityComparer?)` | `boolean` | looks in the cache for the given `value` and returns `true` if it finds a cach entry with this value or `false` (otherwise). If `fnEqualityComparer` function specified, it uses that in order to find cached entry when comparing given `value` with a cached value upon iterating over cached entries. |
+| `clean()` | `void` | cleans cache; removes items that are invalid (expired) and are wasting memory. |
+| `clear()` | `void` | clears out the cache (removes all entries). |
 | `getDuration(duration)` | `number` | This is a helper `protected` method that is inherited to sub-classes. It validates given `duation` value. a zero or lower than zero value indicates that the item is expired. |
 
 #### Properties
@@ -67,20 +63,11 @@ constructor(config)
 function fnCondition(cache: CacheBase, entry: CacheItem): boolean
 ```
 
-For their async equivalent, i.e. `getItemAsync()` and `getOrSetAsync()`, the signature could be either of the followings:
-
-```javascript
-function fnCondition(cache: CacheBase, entry: CacheItem): boolean
-function fnCondition(cache: CacheBase, entry: CacheItem): Promise<boolean>
-```
-
-That is, `getItemAsync` or `getOrSetAsync` should support both sync and async functions regarding `fnCondition`.
-
-The `fnCondition` function enables developer to conditionally get items based on a custom business used in his `fnCondition`. This way, the developer is able to bind validity of cached items to his custom business logic.
+The `fnCondition` function enables developer to conditionally get items based on a custom business. This way, validity of cached items are bound to the custom business logic. If `fnCondition` does not return `true`, cached item is assumed invalid.
 
 <code>CacheBase</code> sub-classes are expected follow the following rules regrding <code>fnCondition</code> function.
 
-- They should call this function upon finding a cached value when `getItem` or `getOrSet` or their async versions is called.
+- They should call this function upon finding a cached value when `getItem`/`getOrSet` is called.
 - Upon invokation, they should pass their instance reference together with the found cached value to `fnCondition`.
 - They should invalidate the cache entry if `fnCondition` returns `false`.
 
@@ -98,20 +85,11 @@ By default, `contains()` method should use `===` when comparing values.
 function fnUpdate(cache: CacheBase, oldValue: any, currentValue: any): any
 ```
 
-For the async equivalent, i.e. `addOrUpdateAsync()`, the signature could be either of the followings:
-
-```javascript
-function fnUpdate(cache: CacheBase, oldValue: any, currentValue: any): any
-function fnUpdate(cache: CacheBase, oldValue: any, currentValue: any): Promise<any>
-```
-
-That is, `addOrUpdateAsync` should support both sync and async functions regarding `fnUpdate`.
-
 ### `CacheDefault`
-This is a default working implementation of `CacheBase`. It stores cached items in an internal array. Cache entries are stored as `CacheItem` instances in the array.
+Default implementation of `CacheBase`. It stores cached items in an internal array in memory. Cache entries are stored as `CacheItem` instances.
 
 ### CacheItem
-This class defines structure of cache entries. Its structure is as follows:
+Defines structure of cache entries. Its structure is as follows:
 
 ```javascript
 {
@@ -134,14 +112,18 @@ This class defines structure of cache entries. Its structure is as follows:
 | `invalid()` | `void` | Invalidates cache entry. |
 
 ### `CacheNull`
-This is a no-cache implementation of `CacheBase` that does not store anything and its `getItem` always returns null. It can be used whenever application intends to disable caching.
+This is a no-cache implementation of `CacheBase` that does not store anything and its `getItem` always returns null. It can be used for testing or when application intends to disable caching.
 
 ## Examples
 
 ### Example 1: Normal getItem/setItem, no condition
 
 ```javascript
-const user = { id: '123', username: 'john.doe', email: 'john@doe.com' }
+const user = {
+    id: '123',
+    username: 'john.doe',
+    email: 'john@doe.com'
+}
 
 const cache = new CacheDefault({ duration: 5000 });
 
@@ -157,7 +139,11 @@ console.log(u);
 ### Example 2: contains()
 
 ```javascript
-const user = { id: '123', username: 'john.doe', email: 'john@doe.com' }
+const user = {
+    id: '123',
+    username: 'john.doe',
+    email: 'john@doe.com'
+}
 
 const cache = new CacheDefault({ duration: 5000 });
 
@@ -172,13 +158,13 @@ console.log(cache.contains(user, (ua, ub) => ua.id === ub.id));     // true
 ```javascript
 const cache = new CacheDefault({ duration: 5000 });
 
-cache.setItem('key1', 24);
-cache.setItem('key2', 100);
+cache.setItem('key1', 2134);
+cache.setItem('key2', 1001);
 
 let x = cache.getItem('key2', c => c.exists('key1'));
 
 console.log(cache.exists('key2'));     // true
-console.log(x); // 100
+console.log(x); // 1001
 
 cache.remove('key1');
 
@@ -188,7 +174,7 @@ console.log(cache.exists('key2'));     // false
 console.log(x); // undefined
 ```
 
-Conditional `getItem()` is useful when we have a parent/child relationship between our entities. We can get child entities from cache conditionally, say. if their parent is still in the cache or its properties matches we already have in our child.
+One usecase that conditional `getItem()` is useful is when we have a parent/child relationship. We can get child entities from cache conditionally. The condition in such scenario would be if their parent is still in the cache and its lastupdate prop matches the local parent we already have in our child.
 
 ### Example 4: conditional getItem, async
 
@@ -196,29 +182,76 @@ Conditional `getItem()` is useful when we have a parent/child relationship betwe
 async function doSomething() {
     const cache = new CacheDefault({ duration: 5000 });
 
-    async function getChild(childKey, parentKey) {
-        const result = await cache.getItemAsync(childKey, c => new Promise(res => {
+    async function getChildById(id) {
+        const result = await cache.getItem(`child-${id}`, (c, child) => new Promise(res => {
             setTimeout(() => {
-                res(c.exists(parentKey));
+                const p = c.getItem(`parent-${child.parent.id}`)
+
+                if (!p) {
+                    res(false)
+                } else {
+                    if (p.lastUpdate != child.parent.lastUpdate) {
+                        res(false)
+                    } else {
+                        res(true)
+                    }
+                }
             }, 2000);
         }));
 
         return result;
     }
 
-    cache.setItem('key1', 24);
-    cache.setItem('key2', 100);
+    const parent = {
+        id: 1001,
+        name: 'Parent',
+        lastUpdate: new Date()
+    }
+    const child = {
+        id: 2134,
+        name: 'Child',
+        parent: { ...parent }
+    }
 
-    let x = await getChild('key1', 'key2');
+    cache.setItem(`parent-${parent.id}`, parent);
+    cache.setItem(`child-${child.id}`, child);
 
-    console.log(cache.exists('key2'));     // true
-    console.log(x); // 100
+    // child's parent exists in cache and its lastUpdate matches child's parent lastUpdate.
 
-    cache.remove('key1');
+    if (x) {
+        console.log(`child ${x.id} is in cache`);   // this line will be executed
+    } else {
+        console.log(`child ${x.id} is not in cache`);
+    }
 
-    x = await getChild('key1', 'key2');
+    // Scenario 1: parent is removed from cache
+    cache.remove(`parent-${parent.id}`);
 
-    console.log(cache.exists('key2'));     // false
-    console.log(x); // undefined
+    x = await getChildById(2134);
+
+    if (x) {
+        console.log(`child ${x.id} is in cache`);
+    } else {
+        console.log(`child ${x.id} is not in cache`);    // this line will be executed
+    }
+
+    // --------------------------------------------
+    // Scenario 2: parent is updated and put again in cache
+
+    parent.lastUpdate = new Date()
+
+    cache.setItem(`parent-${parent.id}`, parent);
+
+    x = await getChildById(2134);
+
+    // parent exists in cache this time, however, its lastUpdate does not match with child's parent.
+
+    if (x) {
+        console.log(`child ${x.id} is in cache`);
+    } else {
+        console.log(`child ${x.id} is not in cache`);    // this line will be executed
+    }
+
+    // in both scenarios, child will not be returned by cache.
 }
 ```

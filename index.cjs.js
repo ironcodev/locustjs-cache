@@ -39,46 +39,34 @@ class CacheBase {
     this.config = Object.assign({}, config);
   }
   getEntry(key) {
-    (0, _exception.throwNotImplementedException)('CacheBase.getEntry');
+    (0, _exception.throwNotImplementedException)("CacheBase.getEntry");
   }
   getItem(key, fnCondition) {
-    (0, _exception.throwNotImplementedException)('CacheBase.getItem');
-  }
-  getItemAsync(key, fnCondition) {
-    (0, _exception.throwNotImplementedException)('CacheBase.getItemAsync');
+    (0, _exception.throwNotImplementedException)("CacheBase.getItem");
   }
   setItem(key, value, duration) {
-    (0, _exception.throwNotImplementedException)('CacheBase.setItem');
-  }
-  setItemAsync(key, value, duration) {
-    (0, _exception.throwNotImplementedException)('CacheBase.setItemAsync');
+    (0, _exception.throwNotImplementedException)("CacheBase.setItem");
   }
   addOrUpdate(key, value, fnUpdate, duration) {
-    (0, _exception.throwNotImplementedException)('CacheBase.addOrUpdate');
-  }
-  addOrUpdateAsync(key, value, fnUpdate, duration) {
-    (0, _exception.throwNotImplementedException)('CacheBase.addOrUpdateAsync');
+    (0, _exception.throwNotImplementedException)("CacheBase.addOrUpdate");
   }
   getOrSet(key, value, fnCondition, duration) {
-    (0, _exception.throwNotImplementedException)('CacheBase.getOrSet');
-  }
-  getOrSetAsync(key, value, fnCondition, duration) {
-    (0, _exception.throwNotImplementedException)('CacheBase.getOrSetAsync');
+    (0, _exception.throwNotImplementedException)("CacheBase.getOrSet");
   }
   exists(key) {
-    (0, _exception.throwNotImplementedException)('CacheBase.exists');
+    (0, _exception.throwNotImplementedException)("CacheBase.exists");
   }
   remove(key) {
-    (0, _exception.throwNotImplementedException)('CacheBase.remove');
+    (0, _exception.throwNotImplementedException)("CacheBase.remove");
   }
   contains(value, fnEqualityComparer) {
-    (0, _exception.throwNotImplementedException)('CacheBase.contains');
+    (0, _exception.throwNotImplementedException)("CacheBase.contains");
   }
   clean() {
-    (0, _exception.throwNotImplementedException)('CacheBase.clean');
+    (0, _exception.throwNotImplementedException)("CacheBase.clean");
   }
   clear() {
-    (0, _exception.throwNotImplementedException)('CacheBase.clear');
+    (0, _exception.throwNotImplementedException)("CacheBase.clear");
   }
   getDuration(duration) {
     let result = 0;
@@ -114,30 +102,11 @@ class CacheDefault extends CacheBase {
     let result;
     const entry = this.getEntry(key);
     if (entry != null && entry.isValid()) {
-      let ok = true;
       if ((0, _base.isFunction)(fnCondition)) {
-        ok = fnCondition(this, entry.value);
-        if (!ok) {
-          entry.invalid();
-        }
-      }
-      if (ok) {
-        entry.hit();
-        result = entry.value;
-      }
-    }
-    return result;
-  }
-  getItemAsync(key, fnCondition) {
-    let result;
-    let value;
-    const entry = this.getEntry(key);
-    if (entry != null && entry.isValid()) {
-      if ((0, _base.isFunction)(fnCondition)) {
-        const isOk = fnCondition(this, entry.value);
-        if (isOk && (0, _base.isFunction)(isOk.then)) {
+        const ok = fnCondition(this, entry.value);
+        if (ok && (0, _base.isFunction)(ok.then)) {
           result = new Promise((resolve, reject) => {
-            isOk.then(r => {
+            ok.then(r => {
               if (r) {
                 entry.hit();
                 resolve(entry.value);
@@ -148,20 +117,17 @@ class CacheDefault extends CacheBase {
             }).catch(x => reject(x));
           });
         } else {
-          if (isOk) {
+          if (ok) {
             entry.hit();
-            value = entry.value;
+            result = entry.value;
           } else {
             entry.invalid();
           }
         }
       } else {
         entry.hit();
-        value = entry.value;
+        result = entry.value;
       }
-    }
-    if (!result) {
-      result = new Promise(res => res(value));
     }
     return result;
   }
@@ -169,27 +135,6 @@ class CacheDefault extends CacheBase {
     this._data.push(new CacheItem(key, value, duration));
   }
   setItem(key, value, duration) {
-    let result;
-    const entry = this.getEntry(key);
-    if (entry == null) {
-      const _duration = this.getDuration(duration);
-      if ((0, _base.isFunction)(value)) {
-        result = value(this, key, duration);
-      } else {
-        result = value;
-      }
-      this._add(key, result, _duration);
-    } else {
-      if ((0, _base.isFunction)(value)) {
-        result = value(this, key, duration);
-      } else {
-        result = value;
-      }
-      entry.setValue(result);
-    }
-    return result;
-  }
-  setItemAsync(key, value, duration) {
     let result;
     const entry = this.getEntry(key);
     if (entry == null) {
@@ -205,11 +150,11 @@ class CacheDefault extends CacheBase {
           });
         } else {
           this._add(key, _value, _duration);
-          result = Promise.resolve(_value);
+          result = _value;
         }
       } else {
         this._add(key, value, _duration);
-        result = Promise.resolve(value);
+        result = value;
       }
     } else {
       if ((0, _base.isFunction)(value)) {
@@ -223,41 +168,16 @@ class CacheDefault extends CacheBase {
           });
         } else {
           entry.setValue(_value);
-          result = Promise.resolve(_value);
+          result = _value;
         }
       } else {
         entry.setValue(value);
-        result = Promise.resolve(value);
+        result = value;
       }
     }
     return result;
   }
   addOrUpdate(key, value, fnUpdate, duration) {
-    const entry = this.getEntry(key);
-    let result;
-    if (entry == null) {
-      const _duration = this.getDuration(duration);
-      if ((0, _base.isFunction)(value)) {
-        result = value(this, key, duration);
-      } else {
-        result = value;
-      }
-      this._add(key, result, _duration);
-    } else {
-      if ((0, _base.isFunction)(fnUpdate)) {
-        result = fnUpdate(this, entry.value, value);
-      } else {
-        if ((0, _base.isFunction)(value)) {
-          result = value(this, key, duration);
-        } else {
-          result = value;
-        }
-      }
-      entry.setValue(result);
-    }
-    return result;
-  }
-  addOrUpdateAsync(key, value, fnUpdate, duration) {
     const entry = this.getEntry(key);
     let _value;
     let result;
@@ -274,11 +194,11 @@ class CacheDefault extends CacheBase {
           });
         } else {
           this._add(key, _value, _duration);
-          result = Promise.resolve(_value);
+          result = _value;
         }
       } else {
         this._add(key, value, _duration);
-        result = Promise.resolve(value);
+        result = value;
       }
     } else {
       if ((0, _base.isFunction)(fnUpdate)) {
@@ -292,7 +212,7 @@ class CacheDefault extends CacheBase {
           });
         } else {
           entry.setValue(_value);
-          result = Promise.resolve(_value);
+          result = _value;
         }
       } else {
         if ((0, _base.isFunction)(value)) {
@@ -306,11 +226,11 @@ class CacheDefault extends CacheBase {
             });
           } else {
             entry.setValue(_value);
-            result = Promise.resolve(_value);
+            result = _value;
           }
         } else {
           entry.setValue(value);
-          result = Promise.resolve(value);
+          result = value;
         }
       }
     }
@@ -354,18 +274,6 @@ class CacheDefault extends CacheBase {
     }
     return result;
   }
-  async getOrSetAsync(key, fnCondition, value, duration) {
-    let result;
-    if (this.exists(key)) {
-      result = await this.getItemAsync(key, fnCondition);
-      if (!this.exists(key)) {
-        result = await this.setItemAsync(key, value, duration);
-      }
-    } else {
-      result = await this.setItemAsync(key, value, duration);
-    }
-    return result;
-  }
 }
 exports.CacheDefault = CacheDefault;
 class CacheNull extends CacheBase {
@@ -375,9 +283,6 @@ class CacheNull extends CacheBase {
   getItem(key, fnCondition) {
     return undefined;
   }
-  getItemAsync(key, fnCondition) {
-    return Promise.resolve(undefined);
-  }
   setItem(key, value, duration) {
     if ((0, _base.isFunction)(value)) {
       return value();
@@ -385,25 +290,11 @@ class CacheNull extends CacheBase {
       return value;
     }
   }
-  setItemAsync(key, value, duration) {
-    if ((0, _base.isFunction)(value)) {
-      return Promise.resolve(value());
-    } else {
-      return Promise.resolve(value);
-    }
-  }
   addOrUpdate(key, value, fnUpdate, duration) {
     if ((0, _base.isFunction)(value)) {
       return value();
     } else {
       return value;
-    }
-  }
-  addOrUpdateAsync(key, value, fnUpdate, duration) {
-    if ((0, _base.isFunction)(value)) {
-      return Promise.resolve(value());
-    } else {
-      return Promise.resolve(value);
     }
   }
   exists(key) {
@@ -422,13 +313,6 @@ class CacheNull extends CacheBase {
       return value();
     } else {
       return value;
-    }
-  }
-  getOrSetAsync(key, fnCondition, value, duration) {
-    if ((0, _base.isFunction)(value)) {
-      return Promise.resolve(value());
-    } else {
-      return Promise.resolve(value);
     }
   }
 }
