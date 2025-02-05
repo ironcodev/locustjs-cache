@@ -1,5 +1,5 @@
-import TestRunner from "@locustjs/test";
-import { CacheDefault } from "../index.esm";
+import { TestRunner } from "@locustjs/test";
+import { CacheDefault } from "../src";
 
 function factory() {
   return new CacheDefault({ duration: 8000 });
@@ -448,4 +448,4 @@ const tests = [
   ],
 ];
 
-TestRunner.start(tests);
+TestRunner.start(tests, true);

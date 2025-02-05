@@ -1,11 +1,11 @@
 {
   "name": "@locustjs/cache",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "This library provides caching utility.",
-  "main": "index.cjs.js",
-  "module": "index.esm.js",
+  "main": "dist/index.js",
+  "module": "src/index.js",
   "scripts": {
-    "build": "babel index.esm.js -o index.cjs.js",
+    "build": "rollup -c",
     "test": "node -r esm ./tests/index.js"
   },
   "repository": {
@@ -24,17 +24,14 @@
   },
   "homepage": "https://github.com/ironcodev/locustjs-cache#readme",
   "devDependencies": {
-    "@babel/cli": "^7.13.14",
-    "@babel/core": "^7.13.15",
-    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
-    "@babel/preset-env": "^7.13.15",
-    "babel-jest": "^26.6.3",
+    "@locustjs/test": "^2.0.1",
+    "@babel/preset-env": "^7.26.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "esm": "^3.2.25",
-    "jest": "^26.6.3"
+    "rollup": "^4.29.1"
   },
   "dependencies": {
-    "@locustjs/base": "^4.0.0",
-    "@locustjs/exception": "^2.0.1",
-    "@locustjs/test": "^1.4.0"
+    "@locustjs/base": "^4.4.1",
+    "@locustjs/exception": "^2.1.1"
   }
 }
