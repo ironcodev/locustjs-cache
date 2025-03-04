@@ -1,5 +1,6 @@
 import { TestRunner } from "@locustjs/test";
 import { CacheDefault } from "../src";
+import { EqualityComparer } from "@locustjs/compare";
 
 function factory() {
   return new CacheDefault({ duration: 8000 });
@@ -303,7 +304,7 @@ const tests = [
     },
   ],
   [
-    "Testing CacheDefault.contains: custom equalityComparator",
+    "Testing CacheDefault.contains: custom equalityComparator 1",
     async function (expect) {
       const cache = factory();
 
@@ -317,6 +318,44 @@ const tests = [
       expect(x).toBe(false);
 
       x = cache.contains(itemCopy, (x, y) => x.name == y.name);
+
+      expect(x).toBe(true);
+    },
+  ],
+  [
+    "Testing CacheDefault.contains: custom equalityComparator 2",
+    async function (expect) {
+      const cache = factory();
+
+      const item = { name: "John Doe" };
+      const itemCopy = { ...item };
+
+      cache.setItem("key1", item);
+
+      let x = cache.contains(itemCopy);
+
+      expect(x).toBe(false);
+
+      x = cache.contains(itemCopy, EqualityComparer.Object.LooseShape);
+
+      expect(x).toBe(true);
+    },
+  ],
+  [
+    "Testing CacheDefault.contains: custom equalityComparator 3",
+    async function (expect) {
+      const cache = factory();
+
+      const item = "John Doe";
+      const item2 = "john doe";
+
+      cache.setItem("key1", item);
+
+      let x = cache.contains(item2);
+
+      expect(x).toBe(false);
+
+      x = cache.contains(item2, EqualityComparer.String.IgnoreCase);
 
       expect(x).toBe(true);
     },

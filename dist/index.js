@@ -2,9 +2,10 @@
 
 var exception = require('@locustjs/exception');
 var base = require('@locustjs/base');
+var compare = require('@locustjs/compare');
 
 function _assertThisInitialized(e) {
-  if (undefined === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   return e;
 }
 function _callSuper(t, o, e) {
@@ -51,7 +52,7 @@ function _isNativeReflectConstruct() {
 }
 function _possibleConstructorReturn(t, e) {
   if (e && ("object" == typeof e || "function" == typeof e)) return e;
-  if (undefined !== e) throw new TypeError("Derived constructors may only return object or undefined");
+  if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined");
   return _assertThisInitialized(t);
 }
 function _setPrototypeOf(t, e) {
@@ -62,7 +63,7 @@ function _setPrototypeOf(t, e) {
 function _toPrimitive(t, r) {
   if ("object" != typeof t || !t) return t;
   var e = t[Symbol.toPrimitive];
-  if (undefined !== e) {
+  if (void 0 !== e) {
     var i = e.call(t, r);
     if ("object" != typeof i) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
@@ -397,7 +398,11 @@ var CacheDefault = /*#__PURE__*/function (_CacheBase) {
   }, {
     key: "contains",
     value: function contains(value, fnEqualityComparer) {
-      if (!base.isFunction(fnEqualityComparer)) {
+      if (fnEqualityComparer instanceof compare.EqualityComparer) {
+        return this._data.find(function (x) {
+          return fnEqualityComparer.equals(x.value, value);
+        }) != null;
+      } else if (!base.isFunction(fnEqualityComparer)) {
         return this._data.find(function (x) {
           return x.value === value;
         }) != null;

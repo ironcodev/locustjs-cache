@@ -1,7 +1,7 @@
 import { isFunction } from "@locustjs/base";
 import CacheBase from "./CacheBase";
 import CacheItem from "./CacheItem";
-
+import { EqualityComparer } from "@locustjs/compare";
 class CacheDefault extends CacheBase {
   constructor(config) {
     super(config);
@@ -213,7 +213,12 @@ class CacheDefault extends CacheBase {
     return result;
   }
   contains(value, fnEqualityComparer) {
-    if (!isFunction(fnEqualityComparer)) {
+    if (fnEqualityComparer instanceof EqualityComparer) {
+      return (
+        this._data.find((x) => fnEqualityComparer.equals(x.value, value)) !=
+        null
+      );
+    } else if (!isFunction(fnEqualityComparer)) {
       return this._data.find((x) => x.value === value) != null;
     } else {
       return this._data.find((x) => fnEqualityComparer(x.value, value)) != null;
